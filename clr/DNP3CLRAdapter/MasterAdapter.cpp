@@ -10,7 +10,7 @@ namespace Adapter
 {
 
 MasterAdapter::MasterAdapter(opendnp3::IMaster* apMaster) :
-	mpMaster(apMaster),
+	mpMaster(apMaster),	
 	mCommandAdapter(gcnew CommandProcessorAdapter(apMaster->GetCommandProcessor()))
 {}
 
@@ -48,7 +48,7 @@ IMasterScan^ MasterAdapter::GetIntegrityScan()
 
 IMasterScan^ MasterAdapter::AddClassScan(int aClassMask, System::TimeSpan period, System::TimeSpan taskRetryPeriod)
 {
-	auto scan = mpMaster->AddClassScan(aClassMask, openpal::TimeDuration::Milliseconds(period.Milliseconds), openpal::TimeDuration::Milliseconds(taskRetryPeriod.Milliseconds));
+	auto scan = mpMaster->AddClassScan(aClassMask, openpal::TimeDuration::Milliseconds(period.TotalMilliseconds), openpal::TimeDuration::Milliseconds(taskRetryPeriod.TotalMilliseconds));
 	return gcnew MasterScanAdapter(scan);
 }
 
