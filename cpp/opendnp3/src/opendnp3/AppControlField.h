@@ -18,65 +18,41 @@
  * may have been made to this file. Automatak, LLC licenses these modifications
  * to you under the terms of the License.
  */
-#ifndef __INDEXED_WRITE_ITERATOR_H_
-#define __INDEXED_WRITE_ITERATOR_H_
+#ifndef __APP_CONTROL_FIELD_H_
+#define __APP_CONTROL_FIELD_H_
 
-
-#include "ObjectHeader.h"
-#include "gen/QualifierCode.h"
-
-#include <assert.h>
-#include <stddef.h>
+#include <cstdint>
 
 namespace opendnp3
 {
 
-/**
-Buffer iterator to write objects prefixed with specific indices.
+/** Represents the first byte in every APDU
 */
-class IndexedWriteIterator
-{
-	friend class APDU;
+struct AppControlField {
+		
+	AppControlField();
 
-public:
+	AppControlField(uint8_t byte);
 
-	IndexedWriteIterator();
+	AppControlField(bool aFIR, bool aFIN, bool aCON, bool aUNS, uint8_t aSEQ = 0);
 
-	const IndexedWriteIterator& operator++();
-	const IndexedWriteIterator operator++(int);
-	uint8_t* operator*() const;
+	uint8_t ToByte() const;
 
-	void SetIndex(size_t aIndex);
-	bool IsEnd() {
-		return mIndex >= mCount;
-	}
-	size_t Count() {
-		return mCount;
-	}
+	bool FIR;
+	bool FIN;
+	bool CON;
+	bool UNS;
+	uint8_t  SEQ;
 
-private:
+	private:
 
-	IndexedWriteIterator(uint8_t* apPos, size_t aCount, QualifierCode aCode, size_t aObjectSize);
-
-	enum IndexMode {
-		IM_NONE = 0,
-		IM_1B = 1,
-		IM_2B = 2,
-		IM_4B = 4
-	};
-
-	static IndexMode GetIndexMode(QualifierCode aCode);
-	static size_t GetPrefixSize(IndexMode);
-
-	uint8_t* mpPos;
-	IndexMode mIndexMode;
-	size_t mIndex;
-	size_t mCount;
-	size_t mObjectSize;
-	bool mIndexSet;
+	static const uint8_t FIR_MASK = 0x80;
+	static const uint8_t FIN_MASK = 0x40;
+	static const uint8_t CON_MASK = 0x20;
+	static const uint8_t UNS_MASK = 0x10;
+	static const uint8_t SEQ_MASK = 0x0F;
 };
 
 }
 
 #endif
-

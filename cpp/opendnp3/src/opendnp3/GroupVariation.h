@@ -82,6 +82,11 @@ enum class GroupVariation : int
 	Group40Var3,
 	Group40Var4,
 
+	Group41Var1,
+	Group41Var2,
+	Group41Var3,
+	Group41Var4,
+
 	Group60Var1,
 	Group60Var2,
 	Group60Var3,
@@ -89,15 +94,21 @@ enum class GroupVariation : int
 
 	Group80Var1,
 
+	Group110AnyVar,
+	Group111AnyVar,
+
 	UNKNOWN
 };
 
-class GroupVariationEnum : private PureStatic
+class GroupVariationRecord
 {
 	public:
 
-	static GroupVariation Get(uint8_t group, uint8_t variation);
-		
+	static GroupVariation GetEnum(uint8_t group, uint8_t variation);
+
+	GroupVariation enumeration;
+	uint8_t group;
+	uint8_t variation;		
 };
 
 }

@@ -32,6 +32,7 @@
 #include "IAPDUHeaderHandler.h"
 #include "LazyIterable.h"
 #include "IndexParser.h"
+#include "APDUHeader.h"
 
 namespace opendnp3
 {
@@ -43,6 +44,7 @@ class APDUParser : private PureStatic
 	enum class Result
 	{
 		OK,
+		NOT_ENOUGH_DATA_FOR_APP_HEADER,
 		NOT_ENOUGH_DATA_FOR_HEADER,
 		NOT_ENOUGH_DATA_FOR_RANGE,
 		NOT_ENOUGH_DATA_FOR_OBJECTS,
@@ -53,6 +55,10 @@ class APDUParser : private PureStatic
 		BAD_START_STOP,
 		COUNT_OF_ZERO
 	};
+
+	static Result ParseRequest(openpal::ReadOnlyBuffer buffer, APDURecord& header);
+
+	static Result ParseResponse(openpal::ReadOnlyBuffer buffer, APDUResponseRecord& header);
 
 	static Result ParseHeaders(openpal::ReadOnlyBuffer buffer, IAPDUHeaderHandler& output);
 
@@ -95,15 +101,30 @@ class APDUParser : private PureStatic
 	template <class ParserType>
 	static Result ParseCount(openpal::ReadOnlyBuffer& buffer, uint32_t& count);	
 
-	static Result ParseObjectsWithRange(const HeaderRecord& record, openpal::ReadOnlyBuffer& buffer, GroupVariation, const Range& range, IAPDUHeaderHandler&  output);	
+	static Result ParseObjectsWithRange(const HeaderRecord& record, openpal::ReadOnlyBuffer& buffer, const GroupVariationRecord&, const Range& range, IAPDUHeaderHandler&  output);	
 	
-	static Result ParseObjectsWithIndexPrefix(const HeaderRecord& record, openpal::ReadOnlyBuffer& buffer, GroupVariation, uint32_t count, IndexParser* pParser, IAPDUHeaderHandler&  output);
+	static Result ParseObjectsWithIndexPrefix(const HeaderRecord& record, openpal::ReadOnlyBuffer& buffer, const GroupVariationRecord& gvRecord, uint32_t count, IndexParser* pParser, IAPDUHeaderHandler&  output);
 	
 	static Result ParseRangeAsBitField(		
 		openpal::ReadOnlyBuffer& buffer, 
 		const HeaderRecord& record,
 		const Range& range, 
 		const std::function<void (const openpal::ReadOnlyBuffer&, const LazyIterable<IndexedValue<bool>>&)>&);
+
+	static Result ParseRangeOfOctetData(
+		const GroupVariationRecord& gvRecord,
+		openpal::ReadOnlyBuffer& buffer, 
+		const HeaderRecord& record,
+		const Range& range, 
+		IAPDUHeaderHandler& handler);
+
+	static Result ParseIndexPrefixedOctetData(
+		const GroupVariationRecord& gvRecord,
+		openpal::ReadOnlyBuffer& buffer, 
+		const HeaderRecord& record,
+		uint32_t count, 
+		IndexParser* pParser, 
+		IAPDUHeaderHandler& handler);
 		
 	template <class Descriptor>
 	static Result ParseRangeFixedSize(GroupVariation gv, const HeaderRecord& record, openpal::ReadOnlyBuffer& buffer, const Range& range, IAPDUHeaderHandler& output);

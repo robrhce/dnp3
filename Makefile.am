@@ -91,6 +91,7 @@ cpp/opendnp3/src/opendnp3/AnalogOutput.cpp \
 cpp/opendnp3/src/opendnp3/APDU.cpp \
 cpp/opendnp3/src/opendnp3/APDUParser.cpp \
 cpp/opendnp3/src/opendnp3/AppChannelStates.cpp \
+cpp/opendnp3/src/opendnp3/AppControlField.cpp \
 cpp/opendnp3/src/opendnp3/AppHeader.cpp \
 cpp/opendnp3/src/opendnp3/AppInterfaces.cpp \
 cpp/opendnp3/src/opendnp3/AppLayerChannel.cpp \
@@ -123,6 +124,7 @@ cpp/opendnp3/src/opendnp3/ExecutorPause.cpp \
 cpp/opendnp3/src/opendnp3/FunctionCodeHelpers.cpp \
 cpp/opendnp3/src/opendnp3/GroupVariation.cpp \
 cpp/opendnp3/src/opendnp3/HeaderReadIterator.cpp \
+cpp/opendnp3/src/opendnp3/IINField.cpp \
 cpp/opendnp3/src/opendnp3/IMeasurementHandler.cpp \
 cpp/opendnp3/src/opendnp3/IndexedWriteIterator.cpp \
 cpp/opendnp3/src/opendnp3/IStack.cpp \

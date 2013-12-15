@@ -18,65 +18,46 @@
  * may have been made to this file. Automatak, LLC licenses these modifications
  * to you under the terms of the License.
  */
-#ifndef __INDEXED_WRITE_ITERATOR_H_
-#define __INDEXED_WRITE_ITERATOR_H_
 
-
-#include "ObjectHeader.h"
-#include "gen/QualifierCode.h"
-
-#include <assert.h>
-#include <stddef.h>
+#include "AppControlField.h"
 
 namespace opendnp3
 {
 
-/**
-Buffer iterator to write objects prefixed with specific indices.
-*/
-class IndexedWriteIterator
-{
-	friend class APDU;
-
-public:
-
-	IndexedWriteIterator();
-
-	const IndexedWriteIterator& operator++();
-	const IndexedWriteIterator operator++(int);
-	uint8_t* operator*() const;
-
-	void SetIndex(size_t aIndex);
-	bool IsEnd() {
-		return mIndex >= mCount;
-	}
-	size_t Count() {
-		return mCount;
-	}
-
-private:
-
-	IndexedWriteIterator(uint8_t* apPos, size_t aCount, QualifierCode aCode, size_t aObjectSize);
-
-	enum IndexMode {
-		IM_NONE = 0,
-		IM_1B = 1,
-		IM_2B = 2,
-		IM_4B = 4
-	};
-
-	static IndexMode GetIndexMode(QualifierCode aCode);
-	static size_t GetPrefixSize(IndexMode);
-
-	uint8_t* mpPos;
-	IndexMode mIndexMode;
-	size_t mIndex;
-	size_t mCount;
-	size_t mObjectSize;
-	bool mIndexSet;
-};
-
+AppControlField::AppControlField(uint8_t byte) :
+	FIR((byte & FIR_MASK) != 0),
+	FIN((byte & FIN_MASK) != 0),
+	CON((byte & CON_MASK) != 0),
+	UNS((byte & UNS_MASK) != 0),
+	SEQ(byte & SEQ_MASK)
+{		
 }
 
-#endif
+AppControlField::AppControlField() :
+	FIR(true),
+	FIN(true),
+	CON(false),
+	UNS(false),
+	SEQ(0)
+{}
+
+AppControlField::AppControlField(bool aFIR, bool aFIN, bool aCON, bool aUNS, uint8_t aSEQ) :
+	FIR(aFIR),
+	FIN(aFIN),
+	CON(aCON),
+	UNS(aUNS),
+	SEQ(aSEQ) 
+{}
+
+uint8_t AppControlField::ToByte() const
+{
+	uint8_t ret = 0;
+	if(FIR) ret |= FIR_MASK;
+	if(FIN) ret |= FIN_MASK;
+	if(CON) ret |= CON_MASK;
+	if(UNS) ret |= UNS_MASK;
+	return ret | (SEQ % 16);	
+}
+
+}
 

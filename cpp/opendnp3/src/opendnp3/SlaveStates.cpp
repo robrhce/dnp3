@@ -141,7 +141,7 @@ void AS_Base::SwitchOnFunction(Slave* c, AS_Base* apNext, const APDU& arRequest,
 
 void AS_Base::DoRequest(Slave* c, AS_Base* apNext, const APDU& arAPDU, SequenceInfo aSeqInfo)
 {
-	c->mRspIIN.Zero();
+	c->mRspIIN.Clear();
 
 	try {
 		this->SwitchOnFunction(c, apNext, arAPDU, aSeqInfo);
@@ -149,13 +149,13 @@ void AS_Base::DoRequest(Slave* c, AS_Base* apNext, const APDU& arAPDU, SequenceI
 	catch (const ParameterException& ex) {
 		ChangeState(c, apNext);
 		ERROR_LOGGER_BLOCK(c->mLogger, LogLevel::Error, ex.Message(), ex.ErrorCode());
-		c->mRspIIN.SetParameterError(true);
+		c->mRspIIN.Set(IINBit::PARAM_ERROR);
 		c->ConfigureAndSendSimpleResponse();
 	}
 	catch (const NotSupportedException& ex) {
 		ChangeState(c, apNext);
 		ERROR_LOGGER_BLOCK(c->mLogger, LogLevel::Error, ex.Message(), ex.ErrorCode());
-		c->mRspIIN.SetFuncNotSupported(true);
+		c->mRspIIN.Set(IINBit::FUNC_NOT_SUPPORTED);
 		c->ConfigureAndSendSimpleResponse();
 	}
 

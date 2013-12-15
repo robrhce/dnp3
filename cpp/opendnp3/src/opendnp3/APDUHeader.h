@@ -18,65 +18,33 @@
  * may have been made to this file. Automatak, LLC licenses these modifications
  * to you under the terms of the License.
  */
-#ifndef __INDEXED_WRITE_ITERATOR_H_
-#define __INDEXED_WRITE_ITERATOR_H_
+#ifndef __APDU_HEADER_H_
+#define __APDU_HEADER_H_
 
+#include <openpal/BufferWrapper.h>
 
-#include "ObjectHeader.h"
-#include "gen/QualifierCode.h"
-
-#include <assert.h>
-#include <stddef.h>
+#include "gen/FunctionCode.h"
+#include "AppControlField.h"
+#include "IINField.h"
 
 namespace opendnp3
 {
 
-/**
-Buffer iterator to write objects prefixed with specific indices.
-*/
-class IndexedWriteIterator
+struct APDURecord
 {
-	friend class APDU;
+	AppControlField control;
+	FunctionCode function;
+	openpal::ReadOnlyBuffer objects;
+};
 
-public:
-
-	IndexedWriteIterator();
-
-	const IndexedWriteIterator& operator++();
-	const IndexedWriteIterator operator++(int);
-	uint8_t* operator*() const;
-
-	void SetIndex(size_t aIndex);
-	bool IsEnd() {
-		return mIndex >= mCount;
-	}
-	size_t Count() {
-		return mCount;
-	}
-
-private:
-
-	IndexedWriteIterator(uint8_t* apPos, size_t aCount, QualifierCode aCode, size_t aObjectSize);
-
-	enum IndexMode {
-		IM_NONE = 0,
-		IM_1B = 1,
-		IM_2B = 2,
-		IM_4B = 4
-	};
-
-	static IndexMode GetIndexMode(QualifierCode aCode);
-	static size_t GetPrefixSize(IndexMode);
-
-	uint8_t* mpPos;
-	IndexMode mIndexMode;
-	size_t mIndex;
-	size_t mCount;
-	size_t mObjectSize;
-	bool mIndexSet;
+struct APDUResponseRecord
+{	
+	AppControlField control;
+	FunctionCode function;
+	IINField iin;
+	openpal::ReadOnlyBuffer objects;
 };
 
 }
 
 #endif
-
